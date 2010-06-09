@@ -1,5 +1,5 @@
 {% extends "admin/change_form.html" %}
-{% load i18n admin_modify adminmedia cms_tags cms_admin %}
+{% load i18n admin_modify adminmedia cms_tags cms_admin cms_misc %}
 {% block title %}{% trans "Change a page" %}{% endblock %}
 
 {% block extrahead %}
@@ -110,7 +110,7 @@
 <div id="page_form_lang_tabs">
     {% for lang_code, lang_name in language_tabs %}
         <input type="button" onclick="trigger_lang_button(this,'./?language={{lang_code}}');"
-            class="language_button {% ifequal lang_code language %}selected{% else %}{% if not lang_code in filled_languages %} notfilled{% endif %}{% endifequal %}"
+            class="language_button {% ifequal lang_code language %}selected{% else %}{% ifnotin lang_code filled_languages %} notfilled{% endifnotin %}{% endifequal %}"
             id="debutton" name="{{lang_code}}" value="{{lang_name}}" /> 
     {% endfor %}
 </div>
