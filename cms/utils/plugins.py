@@ -3,7 +3,6 @@ from django.template.loader import get_template
 from django.template.loader_tags import ConstantIncludeNode, ExtendsNode, BlockNode
 from django.template import NodeList, TextNode, VariableNode
 from django.shortcuts import get_object_or_404
-from cms.templatetags.cms_tags import PlaceholderNode
 from cms.exceptions import DuplicatePlaceholderWarning
 from cms.models import Page
 import warnings
@@ -58,6 +57,7 @@ def _extend_nodelist(extend_node):
     return placeholders
 
 def _scan_placeholders(nodelist, current_block=None, ignore_blocks=[]):
+    from django.templatetags.cms_tags import PlaceholderNode
     placeholders = []
 
     for node in nodelist:
