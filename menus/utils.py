@@ -199,3 +199,12 @@ def handle_navigation_manipulators(navigation_tree, request):
         handler_func = getattr(modifier, func_name)  
         handler_func(navigation_tree, request)
     return navigation_tree
+
+# cache.delete_many was added in Django 1.2, this adds compatibility for 1.1
+def cache_delete_many(keys):
+    from django.core.cache import cache
+    if hasattr(cache, 'delete_many'):
+        cache.delete_many(keys)
+    else:
+        for key in keys:
+            cache.delete(key)

@@ -1,8 +1,9 @@
 from django.conf import settings
-from menus.exceptions import NamespaceAllreadyRegistered
 from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.utils.translation import get_language
+from menus.exceptions import NamespaceAllreadyRegistered
+from menus.utils import cache_delete_many
 import copy
 
 def lex_cache_key(key):
@@ -41,7 +42,7 @@ class MenuPool(object):
             keylang, keysite = lex_cache_key(key)
             if relevance_test(keylang, keysite):
                 to_be_deleted.append(key)
-        cache.delete_many(to_be_deleted)
+        cache_delete_many(to_be_deleted)
         self.cache_keys.difference_update(to_be_deleted)
     
     def register_menu(self, menu):

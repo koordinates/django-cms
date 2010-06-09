@@ -63,11 +63,20 @@ def get_site_cache_key(lang):
 def get_page_cache_key(lang):
     return _get_key(settings.CMS_PAGE_CHOICES_CACHE_KEY, lang)
 
+# cache.delete_many was added in Django 1.2, this adds compatibility for 1.1
+def cache_delete_many(keys):
+    from django.core.cache import cache
+    if hasattr(cache, 'delete_many'):
+        cache.delete_many(keys)
+    else:
+        for key in keys:
+            cache.delete(key)
+
 def _clean_many(prefix):
     keys = []
     for lang in [l[0] for l in settings.LANGUAGES]:
         keys.append(_get_key(prefix, lang))
-    cache.delete_many(keys)
+    cache_delete_many(keys)
 
 def clean_site_choices_cache(sender, **kwargs):
     _clean_many(settings.CMS_SITE_CHOICES_CACHE_KEY)
