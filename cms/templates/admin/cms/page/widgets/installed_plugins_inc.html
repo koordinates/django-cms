@@ -17,9 +17,9 @@
     <select name="copy-plugins">
         <option value="" selected="selected">{% trans "From Language" %}</option>
         {% for lang_code, lang_name in copy_languages %}
-	        {% if language != lang_code %}
+	        {% ifnotequal language lang_code %}
 	        <option value="{{ lang_code }}">{{ lang_name }}</option>
-	        {% endif %}
+	        {% endifnotequal %}
         {% endfor %}
     </select>
     <span class="copy-plugins addlink">{% trans "Copy Plugins" %}</span>
