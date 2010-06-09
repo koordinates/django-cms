@@ -41,7 +41,10 @@ def _extend_nodelist(extend_node):
     # we don't support variable extensions
     if extend_node.parent_name_expr:
         return []
-    blocks = extend_node.get_nodes_by_type(BlockNode)
+    if hasattr(extend_node, 'blocks'):
+        blocks = extend_node.blocks
+    else:
+        blocks = dict([(n.name, n) for n in extend_node.get_nodes_by_type(BlockNode)])
     _extend_blocks(extend_node, blocks)
     placeholders = []
 
