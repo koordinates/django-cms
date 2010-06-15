@@ -793,13 +793,14 @@ class Page(MPTTModel):
         return getattr(self, att_name)
     
     def is_home(self):
-        if self.parent_id:
-            return False
-        else:
-            try:
-                return self.home_pk_cache == self.pk
-            except NoHomeFound:
-                pass
+        if settings.CMS_HOME_PAGE:
+            if self.parent_id:
+                return False
+            else:
+                try:
+                    return self.home_pk_cache == self.pk
+                except NoHomeFound:
+                    pass
         return False
     
     def get_home_pk_cache(self):
