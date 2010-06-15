@@ -58,6 +58,9 @@ CMS_FLAT_URLS = False
 # Wheter the cms has a softroot functionionality
 CMS_SOFTROOT = False
 
+# Whether to make the first published page a 'home' page (publish at the cms root url)
+CMS_HOME_PAGE = True
+
 #Hide untranslated Pages
 CMS_HIDE_UNTRANSLATED = True
 
