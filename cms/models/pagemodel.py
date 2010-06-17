@@ -48,6 +48,10 @@ class Page(MpttPublisher):
     navigation_extenders = models.CharField(_("navigation extenders"), max_length=80, db_index=True, blank=True, null=True, choices=settings.CMS_NAVIGATION_EXTENDERS)
     published = models.BooleanField(_("is published"), blank=True)
     
+    # added by Koordinates so we can create the Page before the Add Page page and
+    # make it explicitly invisible to list views until it's saved with plugin content.
+    has_content = models.BooleanField(_("has content"), blank=True, default=True, db_index=True)
+    
     template = models.CharField(_("template"), max_length=100, choices=settings.CMS_TEMPLATES, help_text=_('The template used to render the content.'))
     site = models.ForeignKey(Site, help_text=_('The site the page is accessible at.'), verbose_name=_("site"))
     
