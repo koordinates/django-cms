@@ -107,15 +107,16 @@ class PageAddForm(forms.ModelForm):
             raise ValidationError("No site found for current settings.")
         
         if site and not is_valid_page_slug(page, parent, lang, slug, site):
-            self._errors['slug'] = ErrorList([_('Another page with this slug already exists')])
-            del cleaned_data['slug']
+            if not slug:
+                self._errors['slug'] = ErrorList([ugettext_lazy('This field is required')])
+            else:
+                self._errors['slug'] = ErrorList([ugettext_lazy('Another page with this slug already exists')])
+            if 'slug' in cleaned_data:
+                del cleaned_data['slug']
         return cleaned_data
     
     def clean_slug(self):
-        slug = slugify(self.cleaned_data['slug'])
-        if not slug:
-            raise ValidationError("Slug must not be empty.")
-        return slug
+        return slugify(self.cleaned_data['slug'])
     
     def clean_language(self):
         language = self.cleaned_data['language']
