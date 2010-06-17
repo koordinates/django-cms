@@ -69,7 +69,11 @@ class Page(MPTTModel):
     navigation_extenders = models.CharField(_("attached menu"), max_length=80, db_index=True, blank=True, null=True)
     published = models.BooleanField(_("is published"), blank=True)
     
-    template = models.CharField(_("template"), max_length=100, choices=template_choices, help_text=_('The template used to render the content.'))
+    # added by Koordinates so we can create the Page before the Add Page page and
+    # make it explicitly invisible to list views until it's saved with plugin content.
+    has_content = models.BooleanField(_("has content"), blank=True, default=True, db_index=True)
+    
+    template = models.CharField(_("template"), max_length=100, choices=settings.CMS_TEMPLATES, help_text=_('The template used to render the content.'))
     site = models.ForeignKey(Site, help_text=_('The site the page is accessible at.'), verbose_name=_("site"))
     
     moderator_state = models.SmallIntegerField(_('moderator state'), choices=moderator_state_choices, default=MODERATOR_NEED_APPROVEMENT, blank=True)
