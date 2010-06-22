@@ -70,22 +70,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	// inline group loader
-	$('fieldset h2').click(function(){
-		// reqest content - do it this way, so we can save some time which
-		// this operation may need
-		var parent = $(this).parent();
-		var pathHolder = $(parent).find('div.load');
-		if (pathHolder.length) {
-			var url = pathHolder.text();
-			// load just once
-			pathHolder.remove();
-			var target = $(parent).find('div.load');
-			$(parent).find('div.loading').load(url);
-		}
-		return false;	
-	});	
-	
 	// load first plugin if there is only one
 	/*$('ul.plugin-list').each(function(i, a){
 		var lis = $(this).children("li")
