@@ -7,7 +7,7 @@ from os.path import join
 from django.utils.encoding import smart_unicode
 import tinymce.settings
 from django.utils import simplejson
-from django.template.defaultfilters import escape
+from django.template.defaultfilters import force_escape
 from django.forms.widgets import flatatt
 import cms.plugins.text.settings
 
@@ -66,7 +66,7 @@ class TinyMCEEditor(TinyMCE):
             mce_config['theme'] = "advanced"
         mce_config['theme_advanced_buttons1_add_before'] = "cmsplugins,cmspluginsedit"
         json = simplejson.dumps(mce_config)
-        html = [u'<textarea%s>%s</textarea>' % (flatatt(final_attrs), escape(value))]
+        html = [u'<textarea%s>%s</textarea>' % (flatatt(final_attrs), force_escape(value))]
         if tinymce.settings.USE_COMPRESSOR:
             compressor_config = {
                 'plugins': mce_config.get('plugins', ''),
@@ -77,7 +77,7 @@ class TinyMCEEditor(TinyMCE):
             }
             c_json = simplejson.dumps(compressor_config)
             html.append(u'<script type="text/javascript">tinyMCE_GZ.init(%s);</script>' % (c_json))
-        html.append(u'<script type="text/javascript">%s;\ntinyMCE.init(%s);</script>' % (self.render_additions(name, value, attrs), json))
+        html.append(u'<script type="text/javascript"><!--\n%s;\ntinyMCE.init(%s);\n//--></script>' % (self.render_additions(name, value, attrs), json))
         return mark_safe(u'\n'.join(html))
     
     
