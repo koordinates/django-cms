@@ -1,4 +1,5 @@
 from cms.models import CMSPlugin
+from django.template.defaultfilters import force_escape
 import re
 
 OBJ_TAG_RE = re.compile(u"\{\{ plugin_object (\d+) \}\}")
