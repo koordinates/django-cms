@@ -1,4 +1,5 @@
 from django.db.models.base import ModelBase
+from django.template.defaultfilters import force_escape
 from cms.models.pagemodel import Page
 from os.path import join
 from datetime import datetime, date
@@ -108,7 +109,24 @@ class CMSPlugin(MpttPublisher):
         else: # django 1.0.2 compatibility
             today = date.today()
             return join(settings.CMS_PAGE_MEDIA_PATH, str(today.year), str(today.month), str(today.day), filename)
-            
+    
+    def get_admin_html_classes(self):
+        return ''
+    
+    def get_admin_html(self):
+        instance, plugin = self.get_plugin_instance()
+        if instance:
+            classes = instance.get_admin_html_classes()
+            if classes:
+                classes = ' class="%s"' % classes
+            return u'<img src="%(icon_src)s" alt="%(icon_alt)s" title="%(icon_alt)s" id="plugin_obj_%(id)d"%(classes)s />' % {
+                'id': self.pk,
+                'icon_src': force_escape(self.get_instance_icon_src()),
+                'icon_alt': force_escape(self.get_instance_icon_alt()),
+                'classes': classes,
+            }
+        else:
+            return ''
     
     def get_instance_icon_src(self):
         """

@@ -24,6 +24,9 @@ class Picture(CMSPlugin):
     longdesc = models.CharField(_("long description"), max_length=255, blank=True, null=True, help_text=_("additional description of the image"))
     float = models.CharField(_("side"), max_length=10, blank=True, null=True, choices=FLOAT_CHOICES)
     
+    def get_admin_html_classes(self):
+        return self.float or ''
+    
     def __unicode__(self):
         if self.alt:
             return self.alt[:40]
