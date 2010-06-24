@@ -7,6 +7,8 @@ USE_TINYMCE = getattr(settings, 'CMS_USE_TINYMCE', "tinymce" in settings.INSTALL
 if USE_TINYMCE:
     import tinymce.settings
     TINYMCE_CONFIG = getattr(settings, 'CMS_PLUGIN_TEXT_TINYMCE_CONFIG', tinymce.settings.DEFAULT_CONFIG)
+    if 'theme_advanced_buttons1_add_before' not in TINYMCE_CONFIG.keys():
+        TINYMCE_CONFIG['theme_advanced_buttons1_add_before'] = "cmsplugins,cmspluginsedit"
 
 WYM_TOOLS = ",\n".join([
     "{'name': 'Bold', 'title': 'Strong', 'css': 'wym_tools_strong'}",
