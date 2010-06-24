@@ -8,6 +8,7 @@ from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import models
 from django.db.models.base import (model_unpickle, simple_class_factory)
 from django.db.models.query_utils import DeferredAttribute
+from django.template.defaultfilters import force_escape
 from django.utils.translation import ugettext_lazy as _
 
 from cms.exceptions import DontUsePageAttributeWarning
@@ -199,6 +200,24 @@ class CMSPlugin(MPTTModel):
             "guaranteed to have a page associated with them!",
             DontUsePageAttributeWarning)
         return get_page_from_placeholder_if_exists(self.placeholder)
+
+    def get_admin_html_classes(self):
+        return ''
+    
+    def get_admin_html(self):
+        instance, plugin = self.get_plugin_instance()
+        if instance:
+            classes = instance.get_admin_html_classes()
+            if classes:
+                classes = ' class="%s"' % classes
+            return u'<img src="%(icon_src)s" alt="%(icon_alt)s" title="%(icon_alt)s" id="plugin_obj_%(id)d"%(classes)s />' % {
+                'id': self.pk,
+                'icon_src': force_escape(self.get_instance_icon_src()),
+                'icon_alt': force_escape(self.get_instance_icon_alt()),
+                'classes': classes,
+            }
+        else:
+            return ''
     
     def get_instance_icon_src(self):
         """
