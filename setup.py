@@ -39,11 +39,11 @@ setup(
     ],
     requires=[
         'django (>1.1.0)',
+        'mptt',
     ],
     packages=find_packages(),
     package_dir={
         'cms': 'cms',
-        'mptt': 'mptt',
         'publisher': 'publisher',
     },
     package_data = {
