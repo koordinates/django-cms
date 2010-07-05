@@ -36,16 +36,11 @@ class Page(MpttPublisher):
         (MODERATOR_APPROVED, _('approved')),
         (MODERATOR_APPROVED_WAITING_FOR_PARENTS, _('app. par.')),
     )
-<<<<<<< HEAD:cms/models/pagemodel.py
-    created_by = models.CharField(_("created by"), max_length=70)
-    changed_by = models.CharField(_("changed by"), max_length=70)
-=======
     
     template_choices = [(x, _(y)) for x,y in settings.CMS_TEMPLATES]
     
     created_by = models.CharField(_("created by"), max_length=70, editable=False)
     changed_by = models.CharField(_("changed by"), max_length=70, editable=False)
->>>>>>> efd7e5f... Fixed the error "ImproperlyConfigured at / 'PageAdmin.exclude' refers to field 'created_by' that is missing from the form" by just setting editable=False on created_by and changed_by and removing all fields from PageAdmin.exclude (the other fields already were editable=False):cms/models/pagemodel.py
     parent = models.ForeignKey('self', null=True, blank=True, related_name='children', db_index=True)
     creation_date = models.DateTimeField(editable=False, default=datetime.now)
     publication_date = models.DateTimeField(_("publication date"), null=True, blank=True, help_text=_('When the page should go live. Status must be "Published" for page to go live.'), db_index=True)
