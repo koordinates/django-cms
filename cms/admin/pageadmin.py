@@ -56,7 +56,7 @@ class PageAdmin(admin.ModelAdmin):
     revision_form_template = "admin/cms/page/revision_form.html"
     recover_form_template = "admin/cms/page/recover_form.html"
     
-    exclude = ['created_by', 'changed_by', 'lft', 'rght', 'tree_id', 'level']
+    exclude = []
     mandatory_placeholders = ('title', 'slug', 'parent', 'site', 'meta_description', 'meta_keywords', 'page_title', 'menu_title')
     top_fields = []
     general_fields = ['title', 'slug', ('published', 'in_navigation')]
