@@ -1,0 +1,19 @@
+<script type="text/javascript">
+if ("{{ csrf_token }}" && !window.patchCsrf){
+	window.patchCsrf = function(jquery){
+		if (window.cmsCsrfPatched){
+			return;
+		}
+		jquery.ajaxSetup({
+			beforeSend: function(xhr, settings) {
+				var re = new RegExp('^https?//' + window.location.hostname + '.*');
+				if (!(re.test(settings.url))) {
+					xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+				}
+			}
+		});
+		window.cmsCsrfPatched = true;
+	}
+}
+
+</script>

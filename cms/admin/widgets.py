@@ -34,7 +34,7 @@ class PluginEditor(Widget):
             'installed_plugins': self.attrs['installed']
         }
         return mark_safe(render_to_string(
-            'admin/cms/page/widgets/plugin_editor.html', context))
+            'admin/cms/page/widgets/plugin_editor.html', context, RequestContext(self.request)))
 
 
 class UserSelectAdminWidget(Select):

@@ -22,3 +22,11 @@
 		{% endif %}
 	{% endif %}
 </div>
+{% include "cms/inc/csrf_js.html" %}
+<script type="text/javascript">
+jQuery(document).ready(function(){
+var placeholder_element = jQuery('#placeholder-{{ placeholder.pk }}');
+placeholder_element.data('id', {{ placeholder.pk }});
+placeholder_element.data('name', '{{ placeholder.slot }}');
+});
+</script>

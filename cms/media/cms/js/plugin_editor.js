@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    patchCsrf($);
     $('span.add-plugin').click(function(){
         var select = $(this).parent().children("select");
         var pluginvalue = select.attr('value');
