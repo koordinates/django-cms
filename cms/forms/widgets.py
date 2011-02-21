@@ -133,6 +133,7 @@ class PluginEditor(Widget):
         js = [join(settings.CMS_MEDIA_URL, path) for path in (
             'js/lib/ui.core.js',
             'js/lib/ui.sortable.js',
+            'js/csrf.js',
             'js/plugin_editor.js',
         )]
         css = {
