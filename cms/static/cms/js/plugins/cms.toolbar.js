@@ -1,9 +1,6 @@
 /*##################################################|*/
 /* #CMS.TOOLBAR# */
-CMS.$(document).ready(function ($) {
-	// assign correct jquery to $ namespace
-	$ = CMS.$ || $;
-
+$(document).ready(function ($) {
 	/*!
 	 * Toolbar
 	 * @public_methods:

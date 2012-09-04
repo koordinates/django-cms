@@ -1,9 +1,6 @@
 /*##################################################|*/
 /* #CMS.BASE# */
-CMS.$(document).ready(function ($) {
-	// assign correct jquery to $ namespace
-	$ = CMS.$ || $;
-
+$(document).ready(function ($) {
 	/*!
 	 * Adds security methods to api namespace
 	 * @public_methods:
@@ -11,7 +8,6 @@ CMS.$(document).ready(function ($) {
 	 * @compatibility: IE >= 7, FF >= 3, Safari >= 4, Chrome > =4, Opera >= 10
 	 */
 	CMS.API.Security = {
-
 		csrf: function () {
 			$.ajaxSetup({
 				beforeSend: function (xhr, settings) {

@@ -1,7 +1,7 @@
 {% load i18n sekizai_tags %}
 {% addtoblock "js" %}
 <script type="text/javascript">
-CMS.$(document).ready(function () {
+$(document).ready(function () {
 	new CMS.Placeholder('#cms_placeholder-bar-{{ placeholder.pk }}', {
 		'type': 'bar',
 		'page_id': '{{ page.id }}',

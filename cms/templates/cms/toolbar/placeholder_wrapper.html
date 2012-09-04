@@ -1,7 +1,7 @@
 {% load sekizai_tags %}
 {% addtoblock "js" %}
 <script type="text/javascript">
-CMS.$(document).ready(function () {
+$(document).ready(function () {
 	new CMS.Placeholder('#cms_placeholder-{{ instance.pk }}', {
 		'type': 'holder',
 		'plugin_id': '{{ instance.pk }}',
