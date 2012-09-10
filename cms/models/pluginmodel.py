@@ -17,6 +17,7 @@ from cms.plugin_rendering import PluginContext, render_plugin
 from cms.utils.helpers import reversion_register
 from cms.utils.placeholder import get_page_from_placeholder_if_exists
 
+from mptt.managers import TreeManager
 from mptt.models import MPTTModel, MPTTModelBase
 
 
@@ -38,14 +39,14 @@ class PluginModelBase(MPTTModelBase):
 
         # create a new class (using the super-metaclass)
         new_class = super(PluginModelBase, cls).__new__(cls, name, bases, attrs)
-        
+
         # if there is a RenderMeta in attrs, use this one
         if attr_meta:
             meta = attr_meta
         else:
             # else try to use the one from the superclass (if present)
             meta = getattr(new_class, '_render_meta', None)
-        
+
         # set a new BoundRenderMeta to prevent leaking of state
         new_class._render_meta = BoundRenderMeta(meta)
 
@@ -53,22 +54,22 @@ class PluginModelBase(MPTTModelBase):
         # 'myapp_' bit from the db_table name.
         if [base for base in bases if isinstance(base, PluginModelBase)]:
             splitter = '%s_' % new_class._meta.app_label
-            
+
             if splitter in new_class._meta.db_table:
                 splitted = new_class._meta.db_table.split(splitter, 1)
                 table_name = 'cmsplugin_%s' % splitted[1]
             else:
                 table_name = new_class._meta.db_table
             new_class._meta.db_table = table_name
-        
+
         return new_class
-         
-    
+
+
 class CMSPlugin(MPTTModel):
     '''
     The base class for a CMS plugin model. When defining a new custom plugin, you should
     store plugin-instance specific information on a subclass of this class.
-    
+
     An example for this would be to store the number of pictures to display in a galery.
 
     Two restrictions apply when subclassing this to use in your own models:
@@ -77,22 +78,24 @@ class CMSPlugin(MPTTModel):
 
     '''
     __metaclass__ = PluginModelBase
-    
+
     placeholder = models.ForeignKey(Placeholder, editable=False, null=True)
     parent = models.ForeignKey('self', blank=True, null=True, editable=False)
     position = models.PositiveSmallIntegerField(_("position"), blank=True, null=True, editable=False)
     language = models.CharField(_("language"), max_length=15, blank=False, db_index=True, editable=False)
     plugin_type = models.CharField(_("plugin_name"), max_length=50, db_index=True, editable=False)
     creation_date = models.DateTimeField(_("creation date"), editable=False, default=datetime.now)
-    
+
     level = models.PositiveIntegerField(db_index=True, editable=False)
     lft = models.PositiveIntegerField(db_index=True, editable=False)
     rght = models.PositiveIntegerField(db_index=True, editable=False)
     tree_id = models.PositiveIntegerField(db_index=True, editable=False)
-        
+
+    objects = tree = TreeManager()
+
     class Meta:
         app_label = 'cms'
-        
+
     class RenderMeta:
         index = 0
         total = 1
@@ -136,18 +139,18 @@ class CMSPlugin(MPTTModel):
     def get_plugin_name(self):
         from cms.plugin_pool import plugin_pool
         return plugin_pool.get_plugin(self.plugin_type).name
-    
+
     def get_short_description(self):
         instance = self.get_plugin_instance()[0]
         if instance:
             return instance.__unicode__()
         else:
             return _("<Empty>")
-    
+
     def get_plugin_class(self):
         from cms.plugin_pool import plugin_pool
         return plugin_pool.get_plugin(self.plugin_type)
-        
+
     def get_plugin_instance(self, admin=None):
         from cms.plugin_pool import plugin_pool
         plugin_class = plugin_pool.get_plugin(self.plugin_type)
@@ -164,7 +167,7 @@ class CMSPlugin(MPTTModel):
         else:
             instance = self
         return instance, plugin
-    
+
     def render_plugin(self, context=None, placeholder=None, admin=False, processors=None):
         instance, plugin = self.get_plugin_instance()
         if instance and not (admin and not plugin.admin_preview):
@@ -183,7 +186,7 @@ class CMSPlugin(MPTTModel):
                 template = None
             return render_plugin(context, instance, placeholder, template, processors)
         return ""
-            
+
     def get_media_path(self, filename):
         pages = self.placeholder.page_set.all()
         if pages.count():
@@ -203,7 +206,7 @@ class CMSPlugin(MPTTModel):
 
     def get_admin_html_classes(self):
         return ''
-    
+
     def get_admin_html(self):
         instance, plugin = self.get_plugin_instance()
         if instance:
@@ -218,7 +221,7 @@ class CMSPlugin(MPTTModel):
             }
         else:
             return ''
-    
+
     def get_instance_icon_src(self):
         """
         Get src URL for instance's icon
@@ -238,17 +241,17 @@ class CMSPlugin(MPTTModel):
             return unicode(plugin.icon_alt(instance))
         else:
             return u''
-        
+
     def save(self, no_signals=False, *args, **kwargs):
         if no_signals:# ugly hack because of mptt
             super(CMSPlugin, self).save_base(cls=self.__class__)
         else:
             super(CMSPlugin, self).save()
-                           
+
     def set_base_attr(self, plugin):
         for attr in ['parent_id', 'placeholder', 'language', 'plugin_type', 'creation_date', 'level', 'lft', 'rght', 'position', 'tree_id']:
             setattr(plugin, attr, getattr(self, attr))
-    
+
     def copy_plugin(self, target_placeholder, target_language, plugin_tree):
         """
         Copy this plugin and return the new plugin.
@@ -293,21 +296,21 @@ class CMSPlugin(MPTTModel):
             old_instance = plugin_instance.__class__.objects.get(pk=self.pk)
             plugin_instance.copy_relations(old_instance)
         return new_plugin
-        
+
     def post_copy(self, old_instance, new_old_ziplist):
         """
         Handle more advanced cases (eg Text Plugins) after the original is
         copied
         """
-        pass 
- 
+        pass
+
     def copy_relations(self, old_instance):
         """
         Handle copying of any relations attached to this plugin. Custom plugins
         have to do this themselves!
         """
         pass
-        
+
     def delete_with_public(self):
         """
             Delete the public copy of this plugin if it exists,
@@ -320,13 +323,13 @@ class CMSPlugin(MPTTModel):
             try:
                 placeholder = Placeholder.objects.get(page=page.publisher_public, slot=slot)
             except Placeholder.DoesNotExist:
-                pass                
+                pass
             else:
                 public_plugin = CMSPlugin.objects.filter(placeholder=placeholder, position=position)
                 public_plugin.delete()
         self.placeholder = None
         self.delete()
-        
+
     def has_change_permission(self, request):
         page = get_page_from_placeholder_if_exists(self.placeholder)
         if page:
@@ -336,16 +339,16 @@ class CMSPlugin(MPTTModel):
         elif self.parent:
             return self.parent.has_change_permission(request)
         return False
-        
+
     def is_first_in_placeholder(self):
         return self.position == 0
-    
+
     def is_last_in_placeholder(self):
         """
         WARNING: this is a rather expensive call compared to is_first_in_placeholder!
         """
         return self.placeholder.cmsplugin_set.all().order_by('-position')[0].pk == self.pk
-    
+
     def get_position_in_placeholder(self):
         """
         1 based position!
