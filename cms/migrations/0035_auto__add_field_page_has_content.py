@@ -7,13 +7,13 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'Page.has_content'
         db.add_column('cms_page', 'has_content', self.gf('django.db.models.fields.BooleanField')(default=True, db_index=True), keep_default=False)
 
 
     def backwards(self, orm):
-        
+
         # Deleting field 'Page.has_content'
         db.delete_column('cms_page', 'has_content')
 
@@ -73,6 +73,7 @@ class Migration(SchemaMigration):
             'can_move_page': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'can_publish': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'can_recover_page': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'can_view': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'sites': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'to': "orm['sites.Site']", 'null': 'True', 'blank': 'True'}),
@@ -136,6 +137,7 @@ class Migration(SchemaMigration):
             'can_moderate': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'can_move_page': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'can_publish': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'can_view': ('django.db.models.fields.BooleanField', [], {'default': 'False', 'blank': 'True'}),
             'grant_on': ('django.db.models.fields.IntegerField', [], {'default': '5'}),
             'group': ('django.db.models.fields.related.ForeignKey', [], {'to': "orm['auth.Group']", 'null': 'True', 'blank': 'True'}),
             'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),

@@ -7,7 +7,7 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        
+
         # Adding field 'GlobalPagePermission.can_view'
         db.add_column('cms_globalpagepermission', 'can_view', self.gf('django.db.models.fields.BooleanField')(default=False, blank=True), keep_default=False)
 
@@ -16,7 +16,7 @@ class Migration(SchemaMigration):
 
 
     def backwards(self, orm):
-        
+
         # Deleting field 'GlobalPagePermission.can_view'
         db.delete_column('cms_globalpagepermission', 'can_view')
 
