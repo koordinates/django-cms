@@ -188,7 +188,7 @@ class PageAdmin(ModelAdmin):
     def get_urls(self):
         """Get the admin urls
         """
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
         info = "%s_%s" % (self.model._meta.app_label, self.model._meta.module_name)
         pat = lambda regex, fn: url(regex, self.admin_site.admin_view(fn), name='%s_%s' % (info, fn.__name__))
 

@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 import os
-import cms
+#import cms
 
 
 CLASSIFIERS = [
@@ -20,7 +20,7 @@ setup(
     author="Patrick Lauber",
     author_email="digi@treepy.com",
     name='django-cms',
-    version=cms.__version__,
+    version='2.3.1',
     description='An Advanced Django CMS',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     url='https://www.django-cms.org/',

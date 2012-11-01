@@ -5,7 +5,7 @@ from cms.utils import get_template_from_request, get_language_from_request
 from cms.utils.i18n import get_fallback_languages
 from cms.utils.page_resolver import get_page_from_request
 from django.conf import settings
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 from django.core.urlresolvers import resolve, Resolver404
 
 from django.http import Http404, HttpResponseRedirect
