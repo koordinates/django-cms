@@ -3,7 +3,7 @@ from cms.apphook_pool import apphook_pool
 from cms.utils.moderator import get_page_queryset
 
 from django.conf import settings
-from django.conf.urls.defaults import patterns
+from django.conf.urls import patterns
 from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import RegexURLResolver, Resolver404, reverse, \

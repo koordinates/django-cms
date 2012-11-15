@@ -1,10 +1,7 @@
 /*##################################################|*/
 /* #CMS.BASE# */
 (function namespacing(CMS) {
-	CMS.$(document).ready(function ($) {
-		// assign correct jquery to $ namespace
-		$ = CMS.$ || $;
-
+	$(document).ready(function ($) {
 		// the following is added because IE is stupid
 		// $.ajax requests in IE8 fail without this hack
 		// ref: http://stackoverflow.com/questions/4557532/jquery-ajax-requests-failing-in-ie8-with-message-error-this-method-cannot-be-c

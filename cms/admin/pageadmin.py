@@ -191,7 +191,7 @@ class PageAdmin(ModelAdmin):
     def get_urls(self):
         """Get the admin urls
         """
-        from django.conf.urls.defaults import patterns, url
+        from django.conf.urls import patterns, url
         info = "%s_%s" % (self.model._meta.app_label, self.model._meta.module_name)
         pat = lambda regex, fn: url(regex, self.admin_site.admin_view(fn), name='%s_%s' % (info, fn.__name__))
 
@@ -541,7 +541,7 @@ class PageAdmin(ModelAdmin):
                 'show_delete_translation': len(obj.get_languages()) > 1,
                 'current_site_id': settings.SITE_ID,
             }
-            extra_context = self.update_language_tab_context(request, obj, extra_context)
+            extra_context = self.update_language_tab_context(request, obj, context=extra_context)
         tab_language = request.GET.get("language", None)
         response = super(PageAdmin, self).change_view(request, object_id, extra_context=extra_context)
 
@@ -719,26 +719,26 @@ class PageAdmin(ModelAdmin):
     def recoverlist_view(self, request, extra_context=None):
         if not self.has_recover_permission(request):
             raise PermissionDenied
-        return super(PageAdmin, self).recoverlist_view(request, extra_context)
-
+        return super(PageAdmin, self).recoverlist_view(request, extra_context=extra_context)
+    
     def recover_view(self, request, version_id, extra_context=None):
         if not self.has_recover_permission(request):
             raise PermissionDenied
-        extra_context = self.update_language_tab_context(request, None, extra_context)
-        return super(PageAdmin, self).recover_view(request, version_id, extra_context)
-
+        extra_context = self.update_language_tab_context(request, None, context=extra_context)
+        return super(PageAdmin, self).recover_view(request, version_id, extra_context=extra_context)
+    
     def revision_view(self, request, object_id, version_id, extra_context=None):
         if not self.has_change_permission(request, Page.objects.get(pk=object_id)):
             raise PermissionDenied
-        extra_context = self.update_language_tab_context(request, None, extra_context)
-        response = super(PageAdmin, self).revision_view(request, object_id, version_id, extra_context)
+        extra_context = self.update_language_tab_context(request, None, context=extra_context)
+        response = super(PageAdmin, self).revision_view(request, object_id, version_id, extra_context=extra_context)
         return response
 
     def history_view(self, request, object_id, extra_context=None):
         if not self.has_change_permission(request, Page.objects.get(pk=object_id)):
             raise PermissionDenied
-        extra_context = self.update_language_tab_context(request, None, extra_context)
-        return super(PageAdmin, self).history_view(request, object_id, extra_context)
+        extra_context = self.update_language_tab_context(request, None, context=extra_context)
+        return super(PageAdmin, self).history_view(request, object_id, extra_context=extra_context)
 
     def render_revision_form(self, request, obj, version, context, revert=False, recover=False):
         # reset parent to null if parent is not found

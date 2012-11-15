@@ -18,6 +18,7 @@ from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language, ugettext_lazy as _
 from menus.menu_pool import menu_pool
+from mptt.managers import TreeManager
 from mptt.models import MPTTModel
 from os.path import join
 import copy
@@ -67,6 +68,11 @@ class Page(MPTTModel):
     published = models.BooleanField(_("is published"), blank=True)
 
     template = models.CharField(_("template"), max_length=100, choices=template_choices, help_text=_('The template used to render the content.'))
+
+    # added by Koordinates so we can create the Page before the Add Page page and
+    # make it explicitly invisible to list views until it's saved with plugin content.
+    has_content = models.BooleanField(_("has content"), blank=True, default=True, db_index=True)
+
     site = models.ForeignKey(Site, help_text=_('The site the page is accessible at.'), verbose_name=_("site"))
 
     moderator_state = models.SmallIntegerField(_('moderator state'), choices=moderator_state_choices, default=MODERATOR_NEED_APPROVEMENT, blank=True)
@@ -91,6 +97,7 @@ class Page(MPTTModel):
     # Managers
     objects = PageManager()
     permissions = PagePermissionsPermissionManager()
+    tree = TreeManager()
 
     class Meta:
         permissions = (
@@ -144,6 +151,7 @@ class Page(MPTTModel):
         from cms.models.moderatormodels import PageModeratorState
         self.force_moderation_action = PageModeratorState.ACTION_MOVE
         import cms.signals as cms_signals
+
         cms_signals.page_moved.send(sender=Page, instance=self)  # titles get saved before moderation
         self.save(change_state=True)  # always save the page after move, because of publisher
 
@@ -802,13 +810,14 @@ class Page(MPTTModel):
         return getattr(self, att_name)
 
     def is_home(self):
-        if self.parent_id:
-            return False
-        else:
-            try:
-                return self.home_pk_cache == self.pk
-            except NoHomeFound:
-                pass
+        if settings.CMS_HOME_PAGE:
+            if self.parent_id:
+                return False
+            else:
+                try:
+                    return self.home_pk_cache == self.pk
+                except NoHomeFound:
+                    pass
         return False
 
     def get_home_pk_cache(self):

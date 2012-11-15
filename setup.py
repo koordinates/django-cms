@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 import os
-import cms
+#import cms
 
-        
+
 CLASSIFIERS = [
     'Development Status :: 5 - Production/Stable',
     'Environment :: Web Environment',
@@ -20,7 +20,7 @@ setup(
     author="Patrick Lauber",
     author_email="digi@treepy.com",
     name='django-cms',
-    version=cms.__version__,
+    version='2.3.1',
     description='An Advanced Django CMS',
     long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
     url='https://www.django-cms.org/',
@@ -32,7 +32,7 @@ setup(
         'django-classy-tags>=0.3.4.1',
         'south>=0.7.2',
         'html5lib',
-        'django-mptt>=0.5.1,<0.5.3',
+        'django-mptt>=0.5.1,<0.6',
         'django-sekizai>=0.6.1',
     ],
     tests_require=[
@@ -41,7 +41,7 @@ setup(
         'Sphinx==1.1.3',
         'Jinja2==2.6',
         'Pygments==1.5',
-        
+
     ],
     packages=find_packages(exclude=["project","project.*"]),
     include_package_data=True,

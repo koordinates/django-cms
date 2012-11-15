@@ -20,8 +20,13 @@ function TinyMCEPlaceholderBridge(wym) {
 }
 
 TinyMCEPlaceholderBridge.prototype.insertText = function(text) {
-	tinyMCE.activeEditor.selection.setContent(text);
-
+	// IE hack, see http://stackoverflow.com/questions/1253303/whats-the-best-way-to-set-cursor-caret-position
+	if ($.browser.msie){
+		tinyMCE.activeEditor.execCommand("mceInsertRawHTML", false, text);
+		tinyMCE.activeEditor.focus();
+	} else {
+		tinyMCE.activeEditor.selection.setContent(text);
+	}
 };
 
 TinyMCEPlaceholderBridge.prototype.replaceContent = function(old, rep) {

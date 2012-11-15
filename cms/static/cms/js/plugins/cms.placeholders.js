@@ -1,8 +1,7 @@
 /*##################################################|*/
 /* #CMS.PLACEHOLDERS# */
-CMS.$(document).ready(function ($) {
+$(document).ready(function ($) {
 	// assign correct jquery to $ namespace
-	$ = CMS.$ || $;
 
 	/*!
 	 * Placeholders

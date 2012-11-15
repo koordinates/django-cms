@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 import sys
 
+from django.conf import settings
 from django.db import models
-from django.contrib.auth.models import User
 from django.utils.translation import ugettext_lazy as _
 
 from cms.models.managers import PageModeratorStateManager
@@ -43,7 +43,7 @@ class PageModerator(models.Model):
     MAX_MODERATION_LEVEL = sys.maxint  # just an number
 
     page = models.ForeignKey(Page, verbose_name=_('Page'))
-    user = models.ForeignKey(User, verbose_name=_('User'))
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('User'))
 
     # TODO: permission stuff could be changed to this structure also, this gives
     # better querying performance
@@ -106,7 +106,7 @@ class PageModeratorState(models.Model):
     )
 
     page = models.ForeignKey(Page)
-    user = models.ForeignKey(User, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, null=True)
     created = models.DateTimeField(auto_now_add=True)
     action = models.CharField(max_length=3, choices=_action_choices, null=True, blank=True)
     message = models.TextField(max_length=1000, blank=True, default="")
