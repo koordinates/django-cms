@@ -2,14 +2,19 @@
 from classytags.core import Tag, Options
 from django import template
 from django.core.serializers.json import DjangoJSONEncoder
-from django.utils import simplejson
 from django.utils.text import javascript_quote
+
+import django
+if django.VERSION >= (1, 5):
+    import json
+else:
+    from django.utils import simplejson as json
 
 register = template.Library()
 
 @register.filter
 def js(value):
-    return simplejson.dumps(value, cls=DjangoJSONEncoder)
+    return json.dumps(value, cls=DjangoJSONEncoder)
 
 @register.filter
 def bool(value):
@@ -18,16 +23,16 @@ def bool(value):
     else:
         return 'false'
 
-   
+
 class JavascriptString(Tag):
     name = 'javascript_string'
-    
+
     options = Options(
         blocks=[
             ('end_javascript_string', 'nodelist'),
         ]
     )
-    
+
     def render_tag(self, context, **kwargs):
         rendered = self.nodelist.render(context)
         return u"'%s'" % javascript_quote(rendered.strip())

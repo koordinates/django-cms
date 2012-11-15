@@ -3,7 +3,6 @@ from django.conf import settings
 from django.forms.widgets import flatatt
 from django.template.defaultfilters import escape
 from django.template.loader import render_to_string
-from django.utils import simplejson
 from django.utils.encoding import smart_unicode
 from django.utils.safestring import mark_safe
 from django.utils.translation import get_language
@@ -11,12 +10,19 @@ from tinymce.widgets import TinyMCE, get_language_config
 import cms.plugins.text.settings
 import tinymce.settings
 
+import django
+if django.VERSION >= (1, 5):
+    import json
+else:
+    from django.utils import simplejson as json
+
+
 class TinyMCEEditor(TinyMCE):
-    
+
     def __init__(self, installed_plugins=None,  **kwargs):
         super(TinyMCEEditor, self).__init__(**kwargs)
         self.installed_plugins = installed_plugins
-        
+
     def render_additions(self, name, value, attrs=None):
         language = get_language()
         context = {
@@ -27,7 +33,7 @@ class TinyMCEEditor(TinyMCE):
         }
         return mark_safe(render_to_string(
             'cms/plugins/widgets/tinymce.html', context))
-        
+
     def _media(self):
         media = super(TinyMCEEditor, self)._media()
         media.add_js([cms_static_url(path) for path in (
@@ -41,12 +47,12 @@ class TinyMCEEditor(TinyMCE):
                                                   'css/tinymce_toolbar.css')
             ]
         })
-        
+
         return media
-    
-    
+
+
     media = property(_media)
-    
+
     def render(self, name, value, attrs=None):
         if value is None: value = ''
         value = smart_unicode(value)
@@ -68,8 +74,8 @@ class TinyMCEEditor(TinyMCE):
         mce_config['plugins'] = plugins
         if mce_config['theme'] == "simple":
             mce_config['theme'] = "advanced"
-        
-        json = simplejson.dumps(mce_config)
+
+        mce_json = json.dumps(mce_config)
         html = [u'<textarea%s>%s</textarea>' % (flatatt(final_attrs), escape(value))]
         if tinymce.settings.USE_COMPRESSOR:
             compressor_config = {
@@ -79,10 +85,10 @@ class TinyMCEEditor(TinyMCE):
                 'diskcache': True,
                 'debug': False,
             }
-            c_json = simplejson.dumps(compressor_config)
-            html.append(u'<script type="text/javascript">//<![CDATA[\ntinyMCE_GZ.init(%s);\n//]]></script>' % (c_json))
-        html.append(u'<script type="text/javascript">//<![CDATA[\n%s;\ntinyMCE.init(%s);\n//]]></script>' % (self.render_additions(name, value, attrs), json))
+            compressor_json = json.dumps(compressor_config)
+            html.append(u'<script type="text/javascript">//<![CDATA[\ntinyMCE_GZ.init(%s);\n//]]></script>' % (compressor_json))
+        html.append(u'<script type="text/javascript">//<![CDATA[\n%s;\ntinyMCE.init(%s);\n//]]></script>' % (self.render_additions(name, value, attrs), mce_json))
         return mark_safe(u'\n'.join(html))
-    
-    
-    
+
+
+
