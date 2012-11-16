@@ -135,7 +135,7 @@ class TitleManager(PublisherManager):
         to another language if wanted.
         """
         try:
-            title = self.get(language=language, page=page)
+            title = self.get(language=language, page__pk=page.pk)
             return title
         except self.model.DoesNotExist:
             if language_fallback:

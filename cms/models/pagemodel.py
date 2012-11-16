@@ -120,6 +120,9 @@ class Page(MPTTModel):
             title = u""
         return u'%s' % (title,)
 
+    def __repr__(self):
+        return u'<%s: %s>' % (self.__class__.__name__, self.pk)
+
     def get_absolute_url(self, language=None, fallback=True):
         if self.is_home():
             return reverse('pages-root')
