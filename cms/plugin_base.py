@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from cms.exceptions import SubClassNeededError, Deprecated
 from cms.models import CMSPlugin
+import django
 from django import forms
 from django.conf import settings
 from django.contrib import admin
@@ -167,15 +168,17 @@ class CMSPluginBase(admin.ModelAdmin):
         """
         self.object_successfully_changed = True
         return super(CMSPluginBase, self).response_change(request, obj)
-    
-    def response_add(self, request, obj):
+
+    def response_add(self, request, obj, **kwargs):
         """
         Just set a flag, so we know something was changed, and can make
         new version if reversion installed.
         New version will be created in admin.views.edit_plugin
         """
         self.object_successfully_changed = True
-        return super(CMSPluginBase, self).response_add(request, obj)
+        if django.VERSION >= (1, 5):
+            kwargs.setdefault('continue_editing_url', 'admin:cms_page_edit_plugin')
+        return super(CMSPluginBase, self).response_add(request, obj, **kwargs)
 
     def log_addition(self, request, object):
         pass
