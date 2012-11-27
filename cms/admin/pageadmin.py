@@ -2,20 +2,20 @@
 from cms.admin.change_list import CMSChangeList
 from cms.admin.dialog.views import get_copy_dialog
 from cms.admin.forms import PageForm, PageAddForm
-from cms.admin.permissionadmin import (PAGE_ADMIN_INLINES, 
+from cms.admin.permissionadmin import (PAGE_ADMIN_INLINES,
     PagePermissionInlineAdmin, ViewRestrictionInlineAdmin)
 from cms.admin.views import revert_plugins
 from cms.apphook_pool import apphook_pool
 from cms.exceptions import NoPermissionsException
 from cms.forms.widgets import PluginEditor
-from cms.models import (Page, Title, CMSPlugin, PagePermission, 
+from cms.models import (Page, Title, CMSPlugin, PagePermission,
     PageModeratorState, EmptyTitle, GlobalPagePermission)
 from cms.models.managers import PagePermissionsPermissionManager
 from cms.models.placeholdermodel import Placeholder
 from cms.plugin_pool import plugin_pool
 from cms.templatetags.cms_admin import admin_static_url
-from cms.utils import (copy_plugins, helpers, moderator, permissions, plugins, 
-    get_template_from_request, get_language_from_request, 
+from cms.utils import (copy_plugins, helpers, moderator, permissions, plugins,
+    get_template_from_request, get_language_from_request,
     placeholder as placeholder_utils, admin as admin_utils, cms_static_url)
 from cms.utils.page_resolver import is_valid_url
 from cms.utils.admin import jsonify_request
@@ -33,11 +33,11 @@ from django.core.exceptions import PermissionDenied, ObjectDoesNotExist, Validat
 from django.core.urlresolvers import reverse
 from django.db import router, transaction, models
 from django.forms import CharField
-from django.http import (HttpResponseRedirect, HttpResponse, Http404, 
+from django.http import (HttpResponseRedirect, HttpResponse, Http404,
     HttpResponseBadRequest, HttpResponseForbidden, HttpResponseNotAllowed, HttpResponseServerError)
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template.context import RequestContext
-from django.template.defaultfilters import (title, escape, force_escape, 
+from django.template.defaultfilters import (title, escape, force_escape,
     escapejs)
 from django.utils.encoding import force_unicode
 from django.utils.translation import ugettext, ugettext_lazy as _
@@ -63,7 +63,7 @@ if DJANGO_1_3:
     class ModelAdmin(ModelAdmin):
         def get_inline_instances(self, request):
             return self.inline_instances
-        
+
         def get_prepopulated_fields(self, request):
             return self.prepopulated_fields
 
@@ -248,7 +248,7 @@ class PageAdmin(ModelAdmin):
             obj.pk = pk
             obj.save(no_signals=True)
             obj.save()
-            
+
         else:
             if 'history' in request.path:
                 old_obj = Page.objects.get(pk=obj.pk)
@@ -261,14 +261,14 @@ class PageAdmin(ModelAdmin):
                 moderator.will_require_moderation(target, position)
 
             obj.save(force_with_moderation=force_with_moderation)
-        
+
         if 'recover' in request.path or 'history' in request.path:
             obj.pagemoderatorstate_set.all().delete()
             if settings.CMS_MODERATOR:
                 from cms.utils.moderator import page_changed
                 page_changed(obj, force_moderation_action=PageModeratorState.ACTION_CHANGED)
             revert_plugins(request, obj.version.pk, obj)
-            
+
         language = form.cleaned_data['language']
 
         if target is not None and position is not None:
@@ -290,7 +290,7 @@ class PageAdmin(ModelAdmin):
         if settings.CMS_MODERATOR and 'moderator_message' in form.cleaned_data and \
             form.cleaned_data['moderator_message']:
             moderator.update_moderation_message(obj, form.cleaned_data['moderator_message'])
-            
+
         if obj and "reversion" in settings.INSTALLED_APPS:
             helpers.make_revision_with_plugins(obj)
 
@@ -336,7 +336,7 @@ class PageAdmin(ModelAdmin):
             given_fieldsets = deepcopy(self.add_fieldsets)
 
         return given_fieldsets
-    
+
     def get_fieldset_placeholders(self, template):
         return plugins.get_placeholders(template)
 
@@ -560,7 +560,7 @@ class PageAdmin(ModelAdmin):
             'filled_languages': [lang for lang in filled_languages if lang in allowed_languages],
         })
         return super(PageAdmin, self).render_change_form(request, context, add, change, form_url, obj)
-    
+
     def _get_site_languages(self, obj):
         site_id = None
         if obj:
@@ -668,12 +668,12 @@ class PageAdmin(ModelAdmin):
                 return render_to_response('admin/invalid_setup.html', {'title': _('Database error')})
             return HttpResponseRedirect(request.path + '?' + ERROR_FLAG + '=1')
         cl.set_items(request)
-        
+
         site_id = request.GET.get('site__exact', None)
         if site_id is None:
             site_id = Site.objects.get_current().pk
         site_id = int(site_id)
-        
+
         # languages
         languages = []
         if site_id and site_id in settings.CMS_SITE_LANGUAGES:
@@ -720,13 +720,13 @@ class PageAdmin(ModelAdmin):
         if not self.has_recover_permission(request):
             raise PermissionDenied
         return super(PageAdmin, self).recoverlist_view(request, extra_context=extra_context)
-    
+
     def recover_view(self, request, version_id, extra_context=None):
         if not self.has_recover_permission(request):
             raise PermissionDenied
         extra_context = self.update_language_tab_context(request, None, context=extra_context)
         return super(PageAdmin, self).recover_view(request, version_id, extra_context=extra_context)
-    
+
     def revision_view(self, request, object_id, version_id, extra_context=None):
         if not self.has_change_permission(request, Page.objects.get(pk=object_id)):
             raise PermissionDenied
@@ -752,7 +752,7 @@ class PageAdmin(ModelAdmin):
                     obj.parent = None
                     obj.parent_id = None
                     version.field_dict['parent'] = None
-                    
+
         obj.version = version
 
         return super(PageAdmin, self).render_revision_form(request, obj, version, context, revert, recover)
@@ -780,7 +780,7 @@ class PageAdmin(ModelAdmin):
 
         # move page
         page.move_page(target, position)
-        
+
         if "reversion" in settings.INSTALLED_APPS:
             helpers.make_revision_with_plugins(page)
 
@@ -959,7 +959,7 @@ class PageAdmin(ModelAdmin):
 
         titleobj = get_object_or_404(Title, page__id=object_id, language=language)
         saved_plugins = CMSPlugin.objects.filter(placeholder__page__id=object_id, language=language)
-        
+
         using = router.db_for_read(self.model)
         kwargs = {
             'admin_site': self.admin_site,
@@ -997,10 +997,10 @@ class PageAdmin(ModelAdmin):
             public = obj.publisher_public
             if public:
                 public.save()
-                
+
             if "reversion" in settings.INSTALLED_APPS:
                 helpers.make_revision_with_plugins(obj)
-                
+
             if not self.has_change_permission(request, None):
                 return HttpResponseRedirect("../../../../")
             return HttpResponseRedirect("../../")
@@ -1091,14 +1091,14 @@ class PageAdmin(ModelAdmin):
         """
         Get html for descendants of given page
         Used for lazy loading pages in change_list.js
-        
+
         Permission checks is done in admin_utils.get_admin_menu_item_context
         which is called by admin_utils.render_admin_menu_item.
         """
         page = get_object_or_404(Page, pk=page_id)
         return admin_utils.render_admin_menu_item(request, page,
                 template="admin/cms/page/lazy_menu.html")
-                
+
     @create_on_success
     def add_plugin(self, request):
         '''
@@ -1262,6 +1262,7 @@ class PageAdmin(ModelAdmin):
         if request.method == "POST":
             # set the continue flag, otherwise will plugin_admin make redirect to list
             # view, which actually doesn't exists
+            request.POST = request.POST.copy()
             request.POST['_continue'] = True
 
         if 'reversion' in settings.INSTALLED_APPS and ('history' in request.path or 'recover' in request.path):
@@ -1302,10 +1303,10 @@ class PageAdmin(ModelAdmin):
             # just pass id to plugin_admin
             response = plugin_admin.change_view(request, str(plugin_id))
         if request.method == "POST" and plugin_admin.object_successfully_changed:
-            
+
             # if reversion is installed, save version of the page plugins
             if 'reversion' in settings.INSTALLED_APPS and page:
-                helpers.make_revision_with_plugins(page)    
+                helpers.make_revision_with_plugins(page)
                 reversion.revision.user = request.user
                 plugin_name = unicode(plugin_pool.get_plugin(cms_plugin.plugin_type).name)
                 reversion.revision.comment = ugettext(u"%(plugin_name)s plugin edited at position %(position)s in %(placeholder)s") % {
@@ -1459,7 +1460,7 @@ class PageAdmin(ModelAdmin):
                 page_moderator.save()
                 return admin_utils.render_admin_menu_item(request, page)
         raise Http404
-    
+
     def lookup_allowed(self, key, *args, **kwargs):
         if key == 'site__exact':
             return True
