@@ -6,6 +6,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.core.exceptions import ImproperlyConfigured
+from django.core.urlresolvers import reverse
 from django.db.models.options import get_verbose_name
 from django.forms.models import ModelForm
 from django.utils.encoding import smart_str
@@ -168,7 +169,7 @@ class CMSPluginBase(admin.ModelAdmin):
         """
         self.object_successfully_changed = True
         if django.VERSION >= (1, 5):
-            kwargs.setdefault('continue_editing_url', 'admin:cms_page_edit_plugin')
+            kwargs.setdefault('post_url_continue', reverse('admin:cms_page_edit_plugin', args=[obj.id]))
         return super(CMSPluginBase, self).response_change(request, obj, **kwargs)
 
     def response_add(self, request, obj, **kwargs):
@@ -179,7 +180,7 @@ class CMSPluginBase(admin.ModelAdmin):
         """
         self.object_successfully_changed = True
         if django.VERSION >= (1, 5):
-            kwargs.setdefault('continue_editing_url', 'admin:cms_page_edit_plugin')
+            kwargs.setdefault('post_url_continue', reverse('admin:cms_page_edit_plugin', args=[obj.id]))
         return super(CMSPluginBase, self).response_add(request, obj, **kwargs)
 
     def log_addition(self, request, object):
