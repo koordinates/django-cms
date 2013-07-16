@@ -376,45 +376,45 @@ class PagePermissionsPermissionManager(models.Manager):
         Give a list of page where the user has publish rights or the string "All" if
         the user has all rights.
         """
-        return self.__get_id_list(user, site, "can_publish")
+        return self._get_id_list(user, site, "can_publish")
 
     def get_change_id_list(self, user, site):
         """
         Give a list of page where the user has edit rights or the string "All" if
         the user has all rights.
         """
-        return self.__get_id_list(user, site, "can_change")
+        return self._get_id_list(user, site, "can_change")
 
     def get_add_id_list(self, user, site):
         """
         Give a list of page where the user has add page rights or the string
         "All" if the user has all rights.
         """
-        return self.__get_id_list(user, site, "can_add")
+        return self._get_id_list(user, site, "can_add")
 
     def get_delete_id_list(self, user, site):
         """
         Give a list of page where the user has delete rights or the string "All" if
         the user has all rights.
         """
-        return self.__get_id_list(user, site, "can_delete")
+        return self._get_id_list(user, site, "can_delete")
 
     def get_advanced_settings_id_list(self, user, site):
         """
         Give a list of page where the user can change advanced settings or the
         string "All" if the user has all rights.
         """
-        return self.__get_id_list(user, site, "can_change_advanced_settings")
+        return self._get_id_list(user, site, "can_change_advanced_settings")
 
     def get_change_permissions_id_list(self, user, site):
         """Give a list of page where the user can change permissions.
         """
-        return self.__get_id_list(user, site, "can_change_permissions")
+        return self._get_id_list(user, site, "can_change_permissions")
 
     def get_move_page_id_list(self, user, site):
         """Give a list of pages which user can move.
         """
-        return self.__get_id_list(user, site, "can_move_page")
+        return self._get_id_list(user, site, "can_move_page")
 
     def get_moderate_id_list(self, user, site):
         """Give a list of pages which user can moderate. If moderation isn't
@@ -422,12 +422,12 @@ class PagePermissionsPermissionManager(models.Manager):
         """
         if not settings.CMS_MODERATOR:
             return []
-        return self.__get_id_list(user, site, "can_moderate")
+        return self._get_id_list(user, site, "can_moderate")
 
     def get_view_id_list(self, user, site):
         """Give a list of pages which user can view.
         """
-        return self.__get_id_list(user, site, "can_view")
+        return self._get_id_list(user, site, "can_view")
 
     '''
     def get_change_list_id_list(self, user, site):
@@ -451,7 +451,7 @@ class PagePermissionsPermissionManager(models.Manager):
         return page_id_list
     '''
 
-    def __get_id_list(self, user, site, attr):
+    def _get_id_list(self, user, site, attr):
         from cms.models import (GlobalPagePermission, PagePermission,
                                 MASK_PAGE, MASK_CHILDREN, MASK_DESCENDANTS)
         if attr != "can_view":
