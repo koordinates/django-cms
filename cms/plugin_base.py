@@ -9,6 +9,7 @@ from django.core.exceptions import ImproperlyConfigured
 from django.core.urlresolvers import reverse
 from django.db.models.options import get_verbose_name
 from django.forms.models import ModelForm
+from django.http import HttpResponseRedirect
 from django.utils.encoding import smart_str
 from django.utils.translation import ugettext_lazy as _
 
@@ -161,16 +162,20 @@ class CMSPluginBase(admin.ModelAdmin):
 
         return super(CMSPluginBase, self).save_model(request, obj, form, change)
 
-    def response_change(self, request, obj, **kwargs):
+    def response_change(self, request, obj):
         """
         Just set a flag, so we know something was changed, and can make
         new version if reversion installed.
         New version will be created in admin.views.edit_plugin
         """
         self.object_successfully_changed = True
+        return super(CMSPluginBase, self).response_change(request, obj)
+
+    def response_post_save_change(self, request, obj):
         if django.VERSION >= (1, 5):
-            kwargs.setdefault('post_url_continue', reverse('admin:cms_page_edit_plugin', args=[obj.id]))
-        return super(CMSPluginBase, self).response_change(request, obj, **kwargs)
+            return HttpResponseRedirect(reverse('admin:cms_page_edit_plugin', args=[obj.id]))
+        else:
+            return super(CMSPluginBase, self).response_post_save_change(request, obj)
 
     def response_add(self, request, obj, **kwargs):
         """
